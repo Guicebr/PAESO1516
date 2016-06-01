@@ -87,12 +87,6 @@ push	ecx	!SEND/RECEIVE/BOTH		(function)
 sys_call es una funcion de "src/kernel/proc.c" y es la implementacion de la llamada al sistema.
 Nota. sys-call funciona a base de SEND y RECIEVE.
 
-
-
-
-
-
-
 --------------------------------
 Domingo 28/02/16
 --------------------------------
@@ -139,14 +133,11 @@ _PROTOTYPE( int do_esops, (void)	);
 Se añade la funcion do_esops() en utility.c tal como se da el ejemplo en la practica.
 (¡Cuidado con la línea de _taskcall, cambiar ASOPS por ESOPS (nuestra función)!)
 
-
-
 - Tarea de sistema:
 En el archivo /kernel/system.c se añaden:
 - "FORWARD _PROTOTYPE(int do_esops, (message *m_ptr) );" en la lista de prototipos.
 - "case ESOPS:	r = do_esops(&m);	break;" en el switch de sys_task()
 - La función do_esops, que imprime en la consola el argumento dado.
-
 
 PRIVATE int do_esops(m_ptr)
 register message *m_ptr;
@@ -190,10 +181,6 @@ usr/src/kernel/proc.c ---> Maneja los procesos y llamadas a funciones.
   --> SERVER_Q (Prioridad media) MM y FS.
   --> USER_Q (Prioridad baja) procesos de usuario.
 -[390]unready(rp): Bloquea rp.
-
-
-
-
 -[461]sched(): El proceso en ejecucion lleva demasiado tiempo.
   Si otro proceso de usuario se puede ejecutar, se pone el actual al final de
   la cola.
@@ -234,15 +221,6 @@ Para ampliar la informacion que da do_info() se ha editado:
   "printf("Nombre: %s\n",proc_ptr->p_name);"
   "printf("PID: %d\n",proc_ptr->p_pid);"
   "printf("Nombre de usuario: %d\n",proc_ptr->user_time);"
-
-
-
-
-
-
-
-
-
 
 _____________________ Practica D________________________________________
 (Para info sobre las funciones mirar el Martes 08/03/16)
@@ -290,8 +268,6 @@ en clock.c:
 - Se añade un "int nuevoQ = SCHED_RATE" como variable para cambiar el quantum.
 - Se añade la funcion a la lista:
 	FORWARD _PROTOTYPE( void cambiaQ, (int nq) );
-
-
 - Se crea la función:
 PUBLIC void cambiaQ(nq){
 	nuevoQ = nq;
@@ -360,9 +336,9 @@ http://www.infor.uva.es/~benja/mm/mm.html
 Viernes 15/04/16
 --------------------------------
 
-/*=====================================================================*
- *                                 Resumen                             *
- *=====================================================================*/
+/*==============================================================================================*
+ *                                           Resumen                                            *
+ *==============================================================================================*/
   Carpetas y archivos de interés:
   ___________________________________________________
   * /elleprob.b1	[El editor de texto propio de Minix]
@@ -544,28 +520,26 @@ Martes 24/05/16
 Hemos intentado montar el .vdi de Minix para ver el sistema de archivos y arreglarlo. No hay
 ningún helper que interprete el sistema de archivos de Minix.
 (Seguimos con el Minix de Guillermo, el cual no se brickea)
---------------------------------
-Viernes 26/05/16
---------------------------------
-Creado los comandos creaproc y huecos para comprobar que los algoritmos de memoria funcionan.
-Creada una carpeta PracticaFOld en /root para almacenar ficheros antiguos.
-En PracticaF solo quedan los ficheros necesarios como creaproc.c huecos.c y los 
-	comandos para cambiar de algoritmo.
-creaproc y huecos:
 
-->creaproc:
-	Crea un proceso de tamaño 5KB.
-	Que Imprime la lista de huecos, 
-	la informacion del proceso(data,stack,text)
-	y usa un bucle para calcular una suma.
-	
-->huecos:
-	Crea dos huecos seguidos uno de tamaño 141KB y otro de 134KB.
-	Para ello se crean 4 procesos hijos, todos ellos llaman a la
-	funcion hijo(j*100) siendo j el numero de hijo.
-	La funcion hijo es un bucle donde se realiza una suma de 0 a j.
-	Despues de terminar la funcion los procesos que son impares se
-	quedan esperando con un sleep para generar huecos consistentes.
+--------------------------------
+Jueves 26/05/16
+--------------------------------
+Creados los comandos creaproc y huecos para comprobar que los algoritmos de memoria funcionan.
+Creada una carpeta PracticaFold en /root para almacenar ficheros antiguos.
+en PracticaF solo quedan los ficheros necesarios como creaproc.c,
+huecos.c y los comandos para cambiar de algoritmo.
+
+-creaproc:
+  Crea un proceso de tamaño 5KB que imprime la lista de huecos,
+  la información del proceso (data,stack,text) y usa un bucle
+  para calcular la suma.
+-huecos:
+  Crea dos huecos seguidos, uno de tamaño 141KB y otro de 134KB.
+  Para ello se crean 4 procesos hijos. Todos ellos llaman a la
+  función hijo(j*100) siendo j el número de hijo.
+  La función hijo es un bucle donde se realiza una suma de 0 a j.
+  Después de terminar la función, los procesos impares se quedan
+  esperando con un sleep para generar huecos consistentes.
 
 --------------------------------
 Viernes 27/05/16
@@ -597,13 +571,104 @@ global (fit).
     next->h_next al hueco iterador (hp) y next al hueco
     anterior (prev_ptr)
     -Al principio de cada ciclo del bucle se asigna hp a next.
-	
-Para probar los algoritmos:
 
-	1. Se usa el comando para cambiar de algorimo en terminal1	
-	2. Se ejecuta memlibre en el terminal1 , para ver los huecos que hay.	
-	3. Se ejecuta huecos en el terminal2, para crear los huecos.	
-	4. Se ejecuta memlibre para comprobar que los huecos se han creado correctamente.
-	5. Se ejecuta creaproc en el terminal1 para ver en que hueco se mete.
+--------------------------------
+Martes 31/05/16
+--------------------------------
+Para demostrar los algoritmos, al usar los huecos se imprime
+la lista de huecos antes y después de usar el hueco, así como
+el hueco usado y el espacio que ocupa el proceso.
 
+Arreglado el Next Fit, en vez de guardar un hueco, guarda la
+cantidad de "hp->h_next" ejecutados en un int.
+Razón: Al usar huecos y al liberar memoria, los huecos cambian,
+de modo que el hueco guardado podía no existir en la siguiente
+ejecución.
+
+/*------------------------------------------------------------
+ -                  RESUMEN PRACTICA LIBRE                   -
+ ------------------------------------------------------------*/
+>La asignación de espacio en memoria se administra con la clase:
+/usr/src/mm/alloc.c
+>La función que asigna los huecos de memoria es:
+alloc_mem(clicks) siendo los clicks el espacio que ocupa el
+proceso.
+*Nota: Al usar huecos, si un hueco no es usado completamente,
+se crea otro hueco con el espacio restante y si al liberar
+espacio hay 2 huecos adyacentes, se juntan en uno.
+
+>Variables globales de alloc.c:
+-int fit:
+  Determina el algoritmo de memoria a usar en el switch de 
+  alloc_mem()
+  (Se usan variables alfanuméricas de callnr.h)
+-int info:
+  0: No imprime
+  1: Imprime
+  Determina si al asignar huecos se imprimen los siguientes
+  datos:
+   Lista de huecos
+   Tamaño del proceso y hueco a usar (Posición y tamaño)
+   <Se usa el hueco>
+   Lista de huecos
+-int next:
+  Guarda la "posición" del primer hueco a usar en Next Fit.
+
+*Nota: Estas variable se inicializan a 0 en mem_init()
+(fit a FIRSTFIT)
+
+>Funciones de alloc.c:
+-PUBLIC void printh_h()
+  Imprime la lista de huecos con un bucle (Como en la primera
+  practica)
+-PUBLIC void alg_fit(dato)
+  Cambia la variable fit según "dato" con un switch.
+-PUBLIC void print_info_hueco(dato)
+  Cambia la variable info según "dato" con un switch.
+
+*Los algoritmos son variaciones de alloc_mem, que usa
+first fit. clicks es el tamaño del proceso*
+-PUBLIC phys_clicks firstF(clicks)
+  El alloc_mem viejo.
+-PUBLIC phys_clicks bestF(clicks)
+  Variables extra: hole *best, hole *prev_best
+  Cuando el bucle encuentra un hueco en el que cabe el proceso
+  se produce lo siguiente:
+   Si best está vacío, iguala best al hueco. (Y los prev)
+   Si no, compara el hueco con best y guarda en best el que
+   tenga el hueco más pequeño. (Y los prev)
+  Una vez acabado el bucle, se asigna best a hp y se sigue
+  como lo hacía el algoritmo viejo.
+-PUBLIC phys_clicks worstF(clicks)
+  Igual que bestF pero busca el hueco más grande en el que
+  quepa el proceso.
+-PUBLIC phys_clicks nextF(clicks)
+  Como firstF, pero cuando inicia hp, entra en un bucle que
+  salta tantos huecos (y sus prev) como valga la variable next.
+  A partir de ahí, entra en el bucle del firstF pero cada
+  vez que encuentra un hueco inválido hace next++
+
+-PUBLIC phys_clicks alloc_mem(clicks) *Editado, no nuevo*
+  Usa un switch que redirije a uno de los algoritmos anteriores
+  dependiendo de la variable "fit"
+  *Nota: en los case hay que usar return(<algoritmo>) para que
+  devuelvan lo que alloc_mem ha de devolver.
+
+>Comandos:
+-fit a:
+  Cambia el algoritmo de memoria dependiendo de a
+  0: First Fit
+  1: Best Fit
+  2: Worst Fit
+  3: Next Fit
+-creaPrimos:
+
+-creaproc:
+
+-hinfo a:
+  Cambia la variable "info" de alloc.c para imprimir o no los
+  datos de asignación de huecos. (Ver variable info más arriba)
+-huecos:
+
+-memlibre:
 
