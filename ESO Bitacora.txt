@@ -662,13 +662,21 @@ first fit. clicks es el tamaño del proceso*
   2: Worst Fit
   3: Next Fit
 -creaPrimos:
+  Crea 4 hijos 3 que calculan primos hasta un numero pequeño
+  y 1 que calcula primos hasta un numero grande.
+  Se usa para comprobar el efecto de cambiar el quantum.
 
 -creaproc:
+  Crea un proceso que imprime la lista de huecos,
+  la información del proceso y calcula una suma.
+  Se usa para comprobar que los algoritmos de memoria funcionan.
 
 -hinfo a:
   Cambia la variable "info" de alloc.c para imprimir o no los
   datos de asignación de huecos. (Ver variable info más arriba)
 -huecos:
-
+   Crea 2 huecos el 1ro de mayor tamaño que el 2do.
+   Se usa para comprobar que los algoritmos de memoria funcionan.
 -memlibre:
+  Imprime la lista de huecos libres.
 
